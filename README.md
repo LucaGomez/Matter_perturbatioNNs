@@ -25,6 +25,7 @@ $x\prime\prime-x=0$
 with initial conditions $x(0)=1$, $x\prime(0)=0$. The first step is take this 2nd order equation to a 1st order system as follows
 
 $x\prime-y=0$
+
 $y\prime-x=0$
 
 So the initial conditions become $x(0)=1$ and $y(0)=0$. Its easy to find the analytical solution of this equation as
