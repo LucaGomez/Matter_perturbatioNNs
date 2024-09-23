@@ -51,3 +51,5 @@ $x(t,\alpha) = \frac{1}{2}e^{\sqrt{\alpha}t} + \frac{1}{2}e^{-\sqrt{\alpha}t}$
 And from this follows that
 
 $y(t,\alpha) = \sqrt{\alpha}\left(\frac{1}{2}e^{\sqrt{\alpha}t} - \frac{1}{2}e^{-\sqrt{\alpha}t}\right)$
+
+So, using the "Training_example_bundle.py" code you can train a network to solve the differential equation and you can evaluate the solution in time values but in \alpha values too. This allows you to explore the parameter space evaluating a function and not integrating a system for each step. Next, you can check the "Loading_example_bundle.py" to generate a heatmap in which you can show the percentage error as a function of (t,$\alpha$). 
