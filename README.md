@@ -1,5 +1,5 @@
 # Matter_perturbatioNNs
-In this repository you can find codes to train and load PINNs, implemented to the matter perturbation equation. We reccomend to run the examples codes before to try to use the final ones.
+In this repository you can find codes to train and load PINNs, implemented to the matter perturbation equation. We recommend to read this file and run the examples codes to check that your installation is good, and also to get familiar with the commands.
 
 ## Structure
 The codes of this repository are divided in different folders to make the implementation more didactical for the begginers in the PINNs world. The folders which you can find here are: trainings, loading, parameter inference and error computing. A detailed explanation about this folders is below. After of the folders explanation, you can find the full description of the example used in the codes from the training until to the parameter inference.
@@ -18,6 +18,21 @@ In this folder you can find the codes which implement the new method to estimamt
 
 ## The example in the codes
 
-Suppose that we want to solve the equation
+You can find all the example codes in the respective folder, but you can also get into the folder "Example", or "Bundle_Example" and run all the codes in the same directory. Suppose that we want to solve the equation
 
-$f\prime\prime$
+$x\prime\prime-x=0$
+
+with initial conditions $x(0)=1$, $x\prime(0)=0$. The first step is take this 2nd order equation to a 1st order system as follows
+
+$x\prime-y=0$
+$y\prime-x=0$
+
+So the initial conditions become $x(0)=1$ and $y(0)=0$. Its easy to find the analytical solution of this equation as
+
+$x(t) = \frac{1}{2}e^t + \frac{1}{2}e^{-t}$
+
+And from this follows that
+
+$y(t) = \frac{1}{2}e^t - \frac{1}{2}e^{-t}$
+
+So using the "Training_example.py" you can train a NN to solve this equation, and plot the solutions and compute the percentage error respect to the analytical solution. Using the code "Loading_example.py" you can load this network, and there is also included a numerical integrator which uses the method RK45 to compute the numerical solution and also get the percentage error. This example doesn't includes the bundle method, which is explained below.
