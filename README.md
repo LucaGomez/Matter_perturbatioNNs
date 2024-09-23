@@ -20,4 +20,4 @@ In this folder you can find the codes which implement the new method to estimamt
 
 Suppose that we want to solve the equation
 
-$f^{\prime\prime}$
+$f\prime\prime$
