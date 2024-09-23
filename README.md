@@ -15,3 +15,9 @@ In this folder, you can find the codes which takes the trained networks and impl
 
 ### Error estimation
 In this folder you can find the codes which implement the new method to estimamte the error bounds on the solution of the neural networks without using a numerical solution.  
+
+## The example in the codes
+
+Suppose that we want to solve the equation
+
+$f^{\prime\prime}$
