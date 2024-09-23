@@ -37,3 +37,17 @@ And from this follows that
 $y(t) = \frac{1}{2}e^t - \frac{1}{2}e^{-t}$
 
 So using the "Training_example.py" you can train a NN to solve this equation, and plot the solutions and compute the percentage error respect to the analytical solution. Using the code "Loading_example.py" you can load this network, and there is also included a numerical integrator which uses the method RK45 to compute the numerical solution and also get the percentage error. This example doesn't includes the bundle method, which is explained below.
+
+## The bundle example
+
+Now lets suppose that you want to solve the equation
+
+$x\prime\prime-\alpha x=0$
+
+where $\alpha$ is a parameter of the model. So if we use a numerical integrator, we need to fix the value of $\alpha$ for each time that we integrate the equation. It means that if we want to explore the parameter space, we need to perform a RK45 method for each step of the exploration. One important goal of the library neurodiffeq consists in the bundle method, which allows to solve the differential equation as a function of parameters. The analytical solution in this case is
+
+$x(t,\alpha) = \frac{1}{2}e^{\sqrt{\alpha}t} + \frac{1}{2}e^{-\sqrt{\alpha}t}$
+
+And from this follows that
+
+$y(t,\alpha) = \sqrt{\alpha}\left(\frac{1}{2}e^{\sqrt{\alpha}t} - \frac{1}{2}e^{-\sqrt{\alpha}t}\right)$
