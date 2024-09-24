@@ -34,9 +34,7 @@ class EtaEstimation:
         """
         Compute the C function.
         """
-        print(t)
         v_sol_val = self.v_sol(t, to_numpy=True)
-        print(v_sol_val)
         if self.multiple_dependent_variables:
             return 2 * v_sol_val[self.v_index] + self.f(t)
         else:
