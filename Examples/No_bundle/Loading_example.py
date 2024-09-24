@@ -5,7 +5,7 @@ from scipy.integrate import solve_ivp
 from neurodiffeq.solvers import BundleSolution1D
 from neurodiffeq.conditions import IVP
 
-'''Load the networks. If your training was done in a GPU, you should change the line 21 by
+'''Load the networks. If your training was done in a GPU, you should change the line 13 by
    
    nets = torch.load('nets_example.ph', map_location=torch.device('cpu'))
 '''
