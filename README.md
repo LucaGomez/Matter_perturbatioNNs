@@ -2,7 +2,7 @@
 In this repository you can find codes to train and load PINNs, implemented to the matter perturbation equation. We recommend to read this file and run the examples codes to check that your installation is good, and also to get familiar with the commands.
 
 ## Structure
-The codes of this repository are divided in different folders to make the implementation more didactical for the begginers in the PINNs world. The folders which you can find here are: examples, training, loading, parameter inference and error computing. A detailed explanation about this folders is below. After of the folders explanation, you can find the full description of the example used in the codes from the training until to the parameter inference.
+The codes of this repository are divided in different folders to make the implementation more didactical for the begginers in the PINNs world. The folders which you can find here are: examples, training, loading, error estimation and parameter inference. A detailed explanation about this folders is below. After of the folders explanation, you can find the full description of the example used in the codes from the training until to the parameter inference.
 
 ### Examples
 
@@ -58,4 +58,4 @@ And from this follows that
 
 $y(t,\alpha) = \sqrt{\alpha}\left(\frac{1}{2}e^{\sqrt{\alpha}t} - \frac{1}{2}e^{-\sqrt{\alpha}t}\right)$
 
-So, using the "Training_example_bundle.py" code you can train a network to solve the differential equation and you can evaluate the solution in time values but in \alpha values too. This allows you to explore the parameter space evaluating a function and not integrating a system for each step. Next, you can check the "Loading_example_bundle.py" to generate a heatmap in which you can show the percentage error as a function of (t,$\alpha$). 
+So, using the "Training_example_bundle.py" code you can train a network to solve the differential equation and you can evaluate the solution in time values but in \alpha values too. This allows you to explore the parameter space evaluating a function and not integrating a system for each step. Next, you can check the "Loading_example_bundle.py" to generate a heatmap in which you can show the percentage error as a function of (t, $\alpha$). 
