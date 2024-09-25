@@ -1,5 +1,5 @@
 # Matter_perturbatioNNs
-In this repository you can find codes to train and load PINNs, implemented to the matter perturbation equation. We recommend to read this file and run the examples codes to check that your installation is good, and also to get familiar with the commands.
+In this repository you can find codes to train and load PINNs, implemented to the matter perturbation equation. We recommend to read this file and run the examples codes to check that your installation is good, and also to get familiar with the commands. We use the library [Neurodiffeq](https://neurodiffeq.readthedocs.io/en/latest/intro.html) to define the NNs and also to perform the training. The repository also contains codes to estimate the error of the PINNs solutions without using the numerical solution, thorugh a new method called the $\eta$ method.
 
 ## Structure
 The codes of this repository are divided in different folders to make the implementation more didactical for the begginers in the PINNs world. The folders which you can find here are: examples, LCDM and Modified_gravity. A detailed explanation about this folders is below.
@@ -48,14 +48,10 @@ $y(t,\alpha) = \sqrt{\alpha}\left(\frac{1}{2}e^{\sqrt{\alpha}t} - \frac{1}{2}e^{
 
 So, using the "Training_example_bundle.py" code you can train a network to solve the differential equation and you can evaluate the solution in time values but in \alpha values too. This allows you to explore the parameter space evaluating a function and not integrating a system for each step. Next, you can check the "Loading_example_bundle.py" to generate a heatmap in which you can show the percentage error as a function of (t, $\alpha$). 
 
-### Training
-In this folder you can find the codes which perform the training of the neural networks. We use the library [Neurodiffeq](https://neurodiffeq.readthedocs.io/en/latest/intro.html) to define the NNs and also to perform the training. You can take one of this codes and apply this one to your own differential equation following the comments of the examples. The codes in this folder are also writed to solve the matter perturbation equation, some of then in the context of $\Lambda$CDM model, and the others in a phenomenological model of modified gravity.
+### LCDM
 
-### Loading
-In this folder you can find the codes which load the neural networks trained before, plot the solutions, and also computes the percentage error resepct to the numerical solutions. We reccomend the use of a code for the training and another for the loading, because maybe you need a cluster to perform the trainings, and next you will need to load the trained networks. So this is why we include this examples on the repository. 
+In this folder you can find the codes which perform the training of the neural networks, the plot of the solutions, the estimation of the error and the estimation of the parameter $\Omega_{m0}$ using the observable $f\sigma_8$, All this in the context of the standard model of cosmology $\Lambda$CDM. The folder contains two directories called Bundle and No_bundle, the estimation of the parameters is done just for the bundle case through the library [emcee](https://emcee.readthedocs.io/en/stable/), but the estimation of the error through the $\eta$ method is done for both cases.
 
-### Parameter inference
-In this folder, you can find the codes which takes the trained networks and implements the parameter inference through a Monte Carlo Markov Chain (MCMC) algorithm. To use this codes you'll need the library [emcee](https://emcee.readthedocs.io/en/stable/). To perform the MCMC you should use an observable, which tipically depends of the solution of the differential equation. The code "MCMC_LCDM.py" perform the inference of the parameter $\Omega_{m0}$ for the $\Lambda$CDM model using the neural network trained with the code "Train_LCDM.py", while the code "MCMC_LCDM_num.py" does the same but using a numerical integrator for the differential equation.
+### Modified_gravity
 
-### Error estimation
-In this folder you can find the codes which implement the new method to estimamte the error bounds on the solution of the neural networks without using a numerical solution. At this point, this method is only valid for the matter perturbation equation.
+This folder contains just the same as LCDM, but implemented to the modified gravity model.
