@@ -55,3 +55,13 @@ In this folder you can find the codes which perform the training of the neural n
 ### Modified_gravity
 
 This folder contains just the same as LCDM, but implemented to the modified gravity model.
+
+## For the user
+
+To run the codes and get into the PINNs world, you first need to be sure that you have all the dependencies. We recommend the creation of a virtual enviornment. In this context, you can start installing Neurodiffeq in your venv just with
+
+##### pip install neurodiffeq
+
+Here we reccomend start with the examples, because there is a lot of comments in the codes. So, get into: examples/No_bundle and run the code "Training_example.py". If the code run, you should find a plot of the loss function and a file called "nets.ph". This file is your first PINN! Now you can run the code "Loading_example.py" (which need to be ran in the same directory as you have saved the "nets.ph" file) and this one will plot the solution, and compute the percentage error. The next step is get into the directory examples/Bundle and do the same, but here you can also perform the parameter estimation using simulated data through the MCMC using the code "MCMC_example.py".
+
+When you have finished with the examples, you can jump into the folder LCDM and train the networks, load the solution, and you can also perform the error estimation through the $\eta$ method with the code "percentage_error.py".
