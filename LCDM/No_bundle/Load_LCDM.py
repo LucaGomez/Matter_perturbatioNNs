@@ -54,6 +54,8 @@ def y(N):
 
 N_vec = np.linspace(N_p_0, N_p_f,200)
 
+a_vec = np.exp(n_0 * N_vec)
+
 x_nn=x(N_vec)
 y_nn=y(N_vec)
 
@@ -87,8 +89,8 @@ y_num=out2.y[1]
    solution in terms of delta and delta_prime.
 '''
 
-delta_p_nn=np.exp(x_nn)*y_nn/n_0
-delta_p_num=np.exp(x_num)*y_num/n_0
+delta_p_nn=np.exp(x_nn)*y_nn/(n_0*a_vec)
+delta_p_num=np.exp(x_num)*y_num/(n_0*a_vec)
 delta_nn=np.exp(x_nn)
 delta_num=np.exp(x_num)
 N=N_vec*n_0
