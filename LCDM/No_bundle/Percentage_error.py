@@ -144,7 +144,7 @@ def delta_fun(X):
 
 def delta_prime_fun(X, Y, indep_var):
     N_hat = N_hat_fun(indep_var)
-    out = Y*np.e**(X - (N_hat*n_i))/n_i
+    out = Y*np.e**(X)/(n_i*indep_var)
     return out
 
 '''Now load the networks that we'll use to compute the percentage error.
@@ -208,7 +208,7 @@ def eta_x_hat_for_int(order=J, loose_bound=False, tight_bound=False):
 
 eta_x_hat = interp1d(ts_for_int, eta_x_hat_for_int())
 
-'''Define if you want to plot as function of the scale factor or the redshift.
+'''Define if you want to plot as function of the scale factor or the redshift. Use the scale factor.
 '''
 
 plot_with_a = True
