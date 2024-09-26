@@ -52,6 +52,8 @@ def y(N, Om_m_0):
 
 N_vec = np.linspace(N_p_0, N_p_f,200)
 
+a_vec = np.exp(n_0 * N_vec)
+
 '''In this code we load the bundle solution for only one value of Om_m_0. You can put any
    value of this parameter (in the range 0-1) and evaluate the solution of the networks.
 '''
@@ -95,8 +97,8 @@ y_num=out2.y[1]
    solution in terms of delta and delta_prime.
 '''
 
-delta_p_nn=np.exp(x_nn)*y_nn/n_0
-delta_p_num=np.exp(x_num)*y_num/n_0
+delta_p_nn=np.exp(x_nn)*y_nn/(n_0*a_vec)
+delta_p_num=np.exp(x_num)*y_num/(n_0*a_vec)
 delta_nn=np.exp(x_nn)
 delta_num=np.exp(x_num)
 N=N_vec*n_0
