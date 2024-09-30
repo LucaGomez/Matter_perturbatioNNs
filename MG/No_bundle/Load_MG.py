@@ -109,6 +109,7 @@ plt.plot(N, delta_nn, label=r'$\delta$ NN')
 plt.plot(N, delta_num, label=r'$\delta$ Num')
 plt.xlabel(r'$\hat{N} = \ln{a}$')
 plt.ylabel(r'$\delta$, $\delta^\prime$')
+plt.yscale('log')
 plt.legend()
 plt.show()
 
