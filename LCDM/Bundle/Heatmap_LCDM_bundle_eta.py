@@ -14,8 +14,7 @@ from eta_estimation_bundle_utils import EtaEstimation
 
 '''Define the parameters of the problem. In this code we call t to the independent variable
    that goes from -1 to 0. Make sure that the parameters defined here are the same as in the
-   training code. This code corresponds to the bundle case, but we are going to use a fixed
-   value of Om_m_0, which you can change as you want (always inside of the training range).
+   training code.
 '''
 
 t_min = -1
