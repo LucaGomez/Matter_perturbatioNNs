@@ -2,7 +2,7 @@
 In this repository you can find codes to train and load PINNs, implemented to the matter perturbation equation. We recommend to read this file and run the examples codes to check that your installation is good, and also to get familiar with the commands. We use the library [Neurodiffeq](https://neurodiffeq.readthedocs.io/en/latest/intro.html) to define the NNs and also to perform the training. The repository also contains codes to estimate the error of the PINNs solutions without using the numerical solution, thorugh a new method called the $\eta$ method.
 
 ## Structure
-The codes of this repository are divided in different folders to make the implementation more didactical for the begginers in the PINNs world. The folders which you can find here are: examples, LCDM and Modified_gravity. A detailed explanation about this folders is below.
+The codes of this repository are divided in different folders to make the implementation more didactical for the begginers in the PINNs world. The folders which you can find here are: examples, LCDM ($\Lambda$CDM) and MG (Modified Gravity). A detailed explanation about this folders is below.
 
 ### Examples
 
@@ -52,7 +52,7 @@ So, using the "Training_example_bundle.py" code you can train a network to solve
 
 In this folder you can find the codes which perform the training of the neural networks, the plot of the solutions, the estimation of the error and the estimation of the parameter $\Omega_{m0}$ using the observable $f\sigma_8$, All this in the context of the standard model of cosmology $\Lambda$CDM. The folder contains two directories called Bundle and No_bundle, the estimation of the parameters is done just for the bundle case through the library [emcee](https://emcee.readthedocs.io/en/stable/), but the estimation of the error through the $\eta$ method is done for both cases.
 
-### Modified_gravity
+### MG
 
 This folder contains just the same as LCDM, but implemented to the modified gravity model.
 
