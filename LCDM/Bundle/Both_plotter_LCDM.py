@@ -7,7 +7,7 @@ from scipy.stats import scoreatpercentile
 
 '''Read the first chains (that corresponds to the old data)
 '''
-reader1    = emcee.backends.HDFBackend('chain_nn_old.h5',read_only=True)
+reader1    = emcee.backends.HDFBackend('chain_nn_old_LCDM.h5',read_only=True)
 len_chain1, nwalkers1, ndim1=reader1.get_chain().shape
 samples1=reader1.get_chain(flat=True)
 burnin    = burnin=int(0.01*len(samples1[:,0])) ; thin=1
@@ -22,7 +22,7 @@ samples11 = samples11.copy(settings={'mult_bias_correction_order':0,'smooth_scal
 
 '''Read the second chains (that corresponds to the new data)
 '''
-reader2    = emcee.backends.HDFBackend('chain_nn_new.h5',read_only=True)
+reader2    = emcee.backends.HDFBackend('chain_nn_new_LCDM.h5',read_only=True)
 len_chain2, nwalkers2, ndim2=reader2.get_chain().shape
 samples2=reader2.get_chain(flat=True)
 burnin    = burnin=int(0.01*len(samples2[:,0])) ; thin=1
