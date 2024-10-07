@@ -154,7 +154,7 @@ p0[:,1] = p0[:,1] + np.random.uniform( low=-0.1, high=0.1, size=nwalkers )
 '''This file will contain the chains, is the important one becouse you can
    open this afther the process and use a nicer and accurate plotter-code.
 '''
-backend   = emcee.backends.HDFBackend('chain_nn_old.h5')
+backend   = emcee.backends.HDFBackend('chain_nn_old_LCDM.h5')
 backend.reset(nwalkers, ndim)
 sampler = emcee.EnsembleSampler( nwalkers, ndim, log_posterior, args=(a, fs8_data, err),backend=backend)
 max_n = nsteps
