@@ -7,13 +7,13 @@ from neurodiffeq.conditions import BundleIVP
 import torch
 from scipy.integrate import simpson
 
-Om_r=5.38*10**(-5)
+Om_r = 5.38*10**(-5)
 a_0 = 10**(-3)
 a_f = 1
 N_0 = np.log(a_0)
-N_f= np.log(a_f)
+N_f = np.log(a_f)
 
-n_0=np.abs(N_0)
+n_0 = np.abs(N_0)
 
 '''Lets call the trained network and define the solution.
 '''
