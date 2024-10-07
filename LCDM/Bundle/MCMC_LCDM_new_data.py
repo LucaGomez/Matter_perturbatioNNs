@@ -80,8 +80,8 @@ def dL(params,a):
     y = Integrando((Om_m_0, s8))(x)
     return simpson(y, x = x)
 
-'''The following is the observational data of fs8. In this code we use the data
-   from the Nesseris paper, which we'll call the 'old' data.
+'''The following is the observational data of fs8. In this code we use the new dataset
+   provided by Claudia Scóccola
 '''
 
 z = [0.17, 0.02, 0.02, 0.44, 0.60, 0.73, 0.18, 0.38, 1.4, 0.02, 0.6, 0.86, 0.03, 0.013, 0.15, 0.38, 0.51, 0.70, 0.85, 1.48]
