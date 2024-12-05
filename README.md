@@ -58,6 +58,10 @@ To implement the error bound estimation in the observable $f \sigma_8$ you may r
 
 This folder contains just the same as LCDM, but implemented to the modified gravity model.
 
+### Paper_plots
+
+In this folder you can find the codes to reproduce the plots presented in the paper. You can also find here the trained networks for both models.
+
 ## For the user
 
 To run the codes and get into the PINNs world, you first need to be sure that you have all the dependencies. We recommend the creation of a virtual enviornment. In this context, you can start installing Neurodiffeq in your venv just with
