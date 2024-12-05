@@ -3,7 +3,7 @@ import numpy as np
 from neurodiffeq import diff  # the differentiation operation
 from scipy.integrate import solve_ivp
 from matplotlib import pyplot as plt
-from bound_XY_MG import EtaEstimation_MG
+from Bound_XY_MG import EtaEstimation_MG
 from neurodiffeq.solvers import BundleSolution1D
 from neurodiffeq.conditions import BundleIVP
 from tqdm import tqdm
