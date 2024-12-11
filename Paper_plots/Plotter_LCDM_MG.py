@@ -35,6 +35,9 @@ samples22 = samples22.copy(settings={'mult_bias_correction_order':0,'smooth_scal
 					'smooth_scale_1D':0.3})
 samples11_expanded_MCSamples = MCSamples(samples=samples11_expanded, names=combined_names, labels=labels2)
 
+x_val = 0.315
+y_val = 0.811
+z_val = 0
 
 g = plots.get_subplot_plotter()
 g.triangle_plot(
