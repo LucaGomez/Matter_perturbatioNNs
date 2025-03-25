@@ -164,6 +164,7 @@ class EtaEstimation_MG:
 
         limit = (R * (condition ** (J + 1)) * np.exp(-self.qs_down)) / (1 - condition)
         bound = np.abs(eta) + limit
+        #print('term for Y = '+str(np.max(limit)))
         return interp1d(self.ts_for_int, bound)
     
     def make_eta_bound_X(self, j_max: int):
@@ -176,22 +177,17 @@ class EtaEstimation_MG:
         Returns:
             Numpy array: X bound computed in the values ts.
         """
-        R, K = self.R, self.K
-        ts = self.ts
-        ts_diff = self.ts_diff
-        Q = np.max(np.exp(-self.qs_down))
-        
-        term1 = np.zeros(len(ts))
-        for i in range(j_max):
-            eta = self.eta_list[i]
-            val = cumulative_trapezoid(y = eta,x = ts, initial = 0)
-            term1 += val
-            
-        Om = self.Om_m_0*torch.ones_like(ts_diff)
-        ga = self.g_a*torch.ones_like(ts_diff)
-        residual = self.r(self.v_sol(ts_diff,Om,ga)[0], self.v_sol(ts_diff,Om,ga)[1], ts_diff, self.Om_m_0, self.g_a)[0].reshape(1, -1).detach().numpy()[0]
-        term2 = cumulative_trapezoid(y = residual, x = ts, initial=0)
-        
-        term3 = -R*Q*(ts-ts[0])*(R*K*(ts-ts[0]))**j_max*np.log(np.ones(len(ts))-R*K*(ts-ts[0]))
-        
-        return np.abs(term1-term2) + term3
+        Om_m_0 = self.Om_m_0
+        g_a = self.g_a
+        R = self.R
+        ts = self.ts_for_int
+        ts_diff = self.ts_for_int_diff
+        eta = sum(self.eta_list[:j_max + 1])
+        Om = Om_m_0*torch.ones_like(ts_diff)
+        ga = g_a*torch.ones_like(ts_diff)
+        rs = self.r(*self.v_sol(ts_diff,Om,ga), ts_diff, Om_m_0, g_a)[0].reshape(1, -1).detach().numpy()[0]
+        term1 = np.abs(self.integrator(eta-rs,ts))
+        term2 = -R*(ts-ts[0])*(R*(ts-ts[0]))**j_max*np.log(np.ones(len(ts))-R*(ts-ts[0]))
+        bound = term1+term2
+        #print('term for X = '+str(np.max(term2)))
+        return interp1d(self.ts_for_int, bound)
