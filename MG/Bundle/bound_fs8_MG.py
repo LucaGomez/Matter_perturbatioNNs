@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Nov 30 19:37:03 2024
+
+@author: lgomez
+"""
+
 import torch
 import numpy as np
 from neurodiffeq import diff  # the differentiation operation
@@ -6,6 +14,7 @@ from matplotlib import pyplot as plt
 from bound_XY_MG import EtaEstimation_MG
 from neurodiffeq.solvers import BundleSolution1D
 from neurodiffeq.conditions import BundleIVP
+from tqdm import tqdm
 
 '''Set up the parameters of the problem
 '''
@@ -17,19 +26,18 @@ a_i = 1e-3                  # The initial value of the scale factor
 n_i = np.abs(np.log(a_i))   # A relevant parameter in the equations
 X_0 = -n_i                  # Initial condition for X(N)
 Y_0 = n_i                   # Initial condition for Y(N)
-Om_m_0_min = 0.1            # The min value of \Omega_matter today
-Om_m_0_max = 0.5            # The max value of \Omega_matter today
-g_a_min = -3                # The min value of g_a
-g_a_max = -1                # The max value of g_a
-K = 20                      # The number of \Omegas during the exploration
-n = 2                       # A fixed parameter of the modified gravity model
+Om_m_0_min = 0.15           # The min value of \Omega_matter today
+Om_m_0_max = 0.4            # The max value of \Omega_matter today
+K = 50                     # The number of \Omegas during the exploration
 Om_m_0s = np.linspace(Om_m_0_min, Om_m_0_max, K)
-g_as = np.linspace(g_a_min, g_a_max, K)
-
+n = 2
 '''Define the relevant functions
 '''
 def G_eff_over_G(t, g_a): # The ratio between G_eff/G. Is trivial in LCDM.
-    a = torch.exp(t*n_i)
+    if torch.is_tensor(t):
+        a = torch.exp(t*n_i)
+    else:
+        a = np.exp(t*n_i)
     return 1 + g_a*((1 - a)**n) - g_a*((1 - a)**(2*n))
 
 def C(t): # The value of the function C. Is trivial in matter perturbation.
@@ -86,15 +94,64 @@ def make_bound_delta_prime(N,X,Y,B_X,B_Y): # The bound in \delta\prime.
     a = np.exp(n_i*N)
     return (np.exp(X)/(n_i*a))*np.sqrt(B_X**2*Y**2+B_Y**2)
 
+
+def make_bound_fs8_TVM(X,Y,B_X,B_Y,sigma_8):
+    bound_grad = []
+    U = X[-1]
+    B_U = B_X[-1]
+    lbx = X-B_X
+    ubx = X+B_X
+    lby = Y-B_Y
+    uby = Y+B_Y
+    lbu = U-B_U
+    ubu = U+B_U
+        
+    for i in range(len(X)):
+        max_grad = 0
+        for j in range(len(X)):
+            if lbx[i] <= X[j] <= ubx[i] and lby[i] <= Y[j] <= uby[i]:
+                
+                grad = np.exp(X[j]-lbu)*np.sqrt(2*Y[j]**2+1)
+                if grad > max_grad:
+                    max_grad = grad
+                    
+        bound_grad.append(max_grad)
+        #print('ok')
+    bound_grad = np.array(bound_grad)
+    
+    return sigma_8*bound_grad*np.sqrt(B_X**2+B_Y**2+B_U**2)/n_i
+        
+
+def make_bound_delta_prime(N,X,Y,B_X,B_Y): # The bound in \delta\prime.
+    a = np.exp(n_i*N)
+    return (np.exp(X)/(n_i*a))*np.sqrt(B_X**2*Y**2+B_Y**2)
+
+'''
 def make_bound_fs8(N,X,Y,B_X,B_Y,sigma_8): # The bound in f\sigma_8.
     a = np.exp(n_i*N)
     bound_d = make_bound_delta(X,B_X)
-    bound_d_0=bound_d[-1]
+    bound_d_0 = bound_d[-1]
     bound_dp = make_bound_delta_prime(ts,X,Y,B_X,B_Y)
     delta = np.exp(X)
     delta_0 = delta[-1]
     delta_p = (np.exp(X)*Y)/(n_i*a)
-    return (sigma_8*a/(delta_0**2))*np.sqrt(bound_dp**2+(bound_d_0*delta_p/delta_0)**2)
+    return (sigma_8*a/(delta_0))*np.sqrt(bound_dp**2+(bound_d_0*delta_p/delta_0)**2)
+'''
+def make_bound_fs8(N,X,Y,B_X,B_Y,sigma_8): # The bound in f\sigma_8.
+    a = np.exp(n_i*N)
+    bound_d = make_bound_delta(X,B_X)
+    bound_d_0 = bound_d[-1]
+    bound_dp = make_bound_delta_prime(ts,X,Y,B_X,B_Y)
+    delta = np.exp(X)
+    delta_0 = delta[-1]
+    delta_p = (np.exp(X)*Y)/(n_i*a)
+    return bound_dp
+
+
+def make_bound_fs8_U(N,X,Y,B_X,B_Y,sigma_8): # The bound in f\sigma_8.
+    B_U = B_X[-1]
+    fact = np.exp(X-X[-1]*np.ones_like(X))
+    return (sigma_8*fact/n_i)*np.sqrt(Y**2*(B_X**2+B_U**2)+B_Y**2)
 
 '''Load the trained networks.
 '''
@@ -107,56 +164,130 @@ conditions = [BundleIVP(t_min, X_0), BundleIVP(t_min, Y_0)]
 '''Call the solution and set relevant parameters to compute the bounds.
 '''
 v_sol = BundleSolution1D(nets, conditions)
-j_max = 20
+j_max = 3
 N_for_int = int(1e4)
 ts = np.linspace(t_min, t_max, N_for_int)
 a = np.exp(n_i*ts)
 
+
 '''Define an empty list to fill with the bounds computed.
 '''
-b_fs8_per = []
+b_x = []
+b_y = []
+
+diff_x = []
+diff_y = []
+
+b_d = []
+b_dp = []
+
+diff_d = []
+diff_dp = []
+
+b_fs8 = []
+diff_fs8 = []
 
 '''Now iterate for the selected values of \Omega_matter today.
 '''
-for i in range(len(Om_m_0s)):    
-    row = []
-    for j in range(len(g_as)):
-        
-        '''Call the class to estimate the bounds for each value of omega matter and g_a.
-        '''
-        eta_module = EtaEstimation_MG(v_sol=v_sol, Om_m_0=Om_m_0s[i], g_a=g_as[j], v_index=1, res_fun=res, B_fun=B, C_fun=C, t_min=t_min, t_max=t_max, N_for_int=N_for_int, j_max=j_max)
-        eta_module.compute_etas()
-        '''Call the solution of the neural networks for each value of omega matter and compute
-           value of delta prime.
-        '''
-        X_hats, Y_hats = v_sol(ts, Om_m_0s[i]*np.ones_like(ts), g_as[j]*np.ones_like(ts), to_numpy=True)
-        delta_p = np.exp(X_hats)*Y_hats/(n_i*a)
-        '''Compute the bounds in X and Y explicitly using the class called before.
-        '''
-        bound_y = eta_module.make_eta_bound(J=j_max)(ts)
-        bound_x = eta_module.make_eta_bound_X(j_max=j_max)
-        '''Now compute the bound on fs8 using all the values computed before and append this to the list.
-        '''
-        bound_fs8 = make_bound_fs8(ts,X_hats,Y_hats,bound_x,bound_y,sigma_8)
-        index = np.argmax(bound_fs8)
-        row.append(100*np.max(bound_fs8)*np.exp(X_hats[-1])/(sigma_8*a[index]*delta_p[index]))
-    b_fs8_per.append(np.array(row))
-b_fs8_per = np.array(b_fs8_per)
-'''Now define the data values to plot the bound in a relevant range.
-'''
-z_dat = [0.17, 0.02, 0.02, 0.44, 0.60, 0.73, 0.18, 0.38, 1.4, 0.02, 0.6, 0.86, 0.03, 0.013, 0.15, 0.38, 0.51, 0.70, 0.85, 1.48]
-z_dat = np.array(z_dat)
-a_dat = 1/(1+z_dat)
-N_hat_dat = np.log(a_dat)
-N_dat = N_hat_dat/n_i
-'''Plot the bounds in the range defined before.
-'''
+g_a_test = -3e-2
+for i in tqdm(range(len(Om_m_0s))):
+    #print(i)
+    '''Call the class to estimate the bounds for each value of omega matter.
+    '''
+    eta_module = EtaEstimation_MG(v_sol=v_sol, Om_m_0=Om_m_0s[i], g_a=g_a_test, v_index=1, res_fun=res, B_fun=B, C_fun=C, t_min=t_min, t_max=t_max, N_for_int=N_for_int, j_max=j_max)
+    eta_module.compute_etas()
+    
+    bound_y = eta_module.make_eta_bound(J=j_max)(ts)
+    bound_x = eta_module.make_eta_bound_X(j_max=j_max)(ts)
+    
+    '''Call the solution of the neural networks for each value of omega matter and compute
+       value of delta prime.
+    '''
+    X_hats, Y_hats = v_sol(ts, Om_m_0s[i]*np.ones_like(ts), g_a_test*np.ones_like(ts), to_numpy=True)
+    delta = np.exp(X_hats)
+    delta_p = np.exp(X_hats)*Y_hats/(n_i*a)
+    fs8_nn = sigma_8*a*delta_p/np.exp(X_hats[-1])
+
+    X_num, Y_num = u(ts, Om_m_0s[i], g_a_test)
+    delta_num = np.exp(X_num)
+    delta_p_num = np.exp(X_num)*Y_num/(n_i*a)
+    fs8_num = sigma_8*a*delta_p_num/np.exp(X_num[-1])
+    
+    '''Compute the bounds in X and Y explicitly using the class called before.
+    '''
+    
+    bound_d = make_bound_delta(X_hats,bound_x)
+    bound_dp = make_bound_delta_prime(ts,X_hats,Y_hats,bound_x,bound_y)
+    
+    #bound_fs8 = make_bound_fs8(ts,X_hats,Y_hats,bound_x,bound_y,sigma_8)
+    #bound_fs8_U = make_bound_fs8_U(ts,X_hats,Y_hats,bound_x,bound_y,sigma_8)
+    bound_fs8_TVM = make_bound_fs8_TVM(X_hats,Y_hats,bound_x,bound_y,sigma_8)
+    
+    #bound_g = make_bound_g_TVM(X_hats, Y_hats, bound_x, bound_y)
+    #g_nn = np.exp(X_hats+Y_hats)
+    #g_num = np.exp(Y_num+X_num)
+    
+    b_fs8.append(100*(bound_fs8_TVM)/fs8_nn)
+    diff_fs8.append((bound_fs8_TVM-np.abs(fs8_nn-fs8_num))/fs8_nn)
+    '''
+    plt.figure()
+    plt.plot(ts, 100*(bound_fs8_TVM)/fs8_nn, label = 'Bound')
+    #plt.plot(ts, (bound_fs8_U), label = 'Bound U')
+    plt.plot(ts, 100*np.abs(fs8_nn-fs8_num)/fs8_nn, label = 'Num diff')
+    plt.xlabel('N')
+    plt.ylabel('err%')
+    plt.title(str(Om_m_0s[i]))
+    plt.legend()
+    plt.savefig(str(i)+'_MG.png')
+    plt.show()
+    '''
+#%%
+params = {
+    'axes.labelsize': 13,
+    'font.size': 11,
+    'legend.fontsize': 11,
+    'xtick.labelsize': 11,
+    'ytick.labelsize': 11,
+    'text.usetex': False,
+    'mathtext.fontset': 'cm',
+    'mathtext.rm': 'serif',
+    'font.sans-serif': 'Times',
+    "mathtext.fontset": 'cm',
+    'font.family': 'serif',
+    }
+plt.rcParams.update(params)
+
+b_fs8 = np.array(b_fs8)
+diff_fs8 = np.array(diff_fs8)
+
 plt.figure()
-plt.pcolormesh(g_as, Om_m_0s, b_fs8_per, cmap='viridis')  # 'viridis' es un mapa de colores, puedes elegir otro
-plt.colorbar()
-plt.xlabel(r'$g_a$')
-#plt.xlim(np.min(N_dat),np.max(N_dat))
+plt.pcolormesh(np.exp(n_i*ts), Om_m_0s, b_fs8, cmap='viridis', rasterized=True)  # 'viridis' es un mapa de colores, puedes elegir otro
+plt.colorbar(label=r'$100*B_{f\sigma_8}/f\sigma_8^{NN}$')
+plt.xlabel(r'$a$')
 plt.ylabel(r'$\Omega_{m0}$')
-plt.title(r'%bound $f\sigma_8$')
-plt.savefig('heatmap_fs8.png')
+plt.xscale('log')
+plt.title(r'$g_a = -3 \times 10^{-2}$')
+plt.savefig('heatmap_fs8_MG_neg.pdf')
+plt.show()
+
+plt.figure()
+plt.pcolormesh(np.exp(n_i*ts), Om_m_0s, diff_fs8, cmap='viridis', rasterized=True)  # 'viridis' es un mapa de colores, puedes elegir otro
+plt.colorbar(label=r'($B_{f\sigma_8} - |f\sigma_8^{NN}-f\sigma_8^{Num}|) /f\sigma_8^{NN}$')
+plt.xlabel(r'$a$')
+plt.ylabel(r'$\Omega_{m0}$')
+plt.xscale('log')
+plt.title(r'$g_a = -3 \times 10^{-2}$')
+plt.savefig('heatmap_fs8_MG_neg_num_diff.pdf')
+plt.show()
+
+#%%
+res_fs8 = np.array(b_fs8) - np.array(diff_fs8)
+
+plt.figure()
+plt.pcolormesh(np.exp(n_i*ts), Om_m_0s, res_fs8, cmap='viridis', rasterized=True)  # 'viridis' es un mapa de colores, puedes elegir otro
+plt.colorbar(label='bound - numerical diff.')
+plt.xlabel(r'$a$')
+plt.ylabel(r'$\Omega_{m0}$')
+plt.savefig('res_fs8_MG_neg.pdf')
+plt.title(str(np.min(res_fs8)))
 plt.show()
