@@ -48,19 +48,11 @@ $y(t,\alpha) = \sqrt{\alpha}\left(\frac{1}{2}e^{\sqrt{\alpha}t} - \frac{1}{2}e^{
 
 So, using the "Training_example_bundle.py" code, you can train a network to solve the differential equation and evaluate the solution both at time values and at $\alpha$ values. This allows you to explore the parameter space by evaluating a function, without integrating a system for each step. Next, you can check "Loading_example_bundle.py" to generate a heatmap showing the percentage error as a function of (t, $\alpha$). 
 
-### LCDM
+### LCDM & MG
 
-In this folder, you can find the codes that perform the training of the neural networks, the plotting of the solutions, the estimation of the error, and the estimation of the parameter $\Omega_{m0}$ using the observable $f\sigma_8$, all within the context of the standard cosmological model $\Lambda$CDM. The folder contains two directories called Bundle and No_bundle. The estimation of parameters is done only for the bundle case through the library [emcee](https://emcee.readthedocs.io/en/stable/), but the error estimation through the $\eta$ method is done for both cases.
+In this folder, you can find the codes that perform the training of the neural networks, the plotting of the solutions, the estimation of the error, and the estimation of the parameter $\Omega_{m0}$ using the observable $f\sigma_8$, all within the context of both the standard cosmological model $\Lambda$CDM and a modified gravity phenomelogical model. The folder contains two directories called Bundle and No_bundle. The estimation of parameters is done only for the bundle case through the library [emcee](https://emcee.readthedocs.io/en/stable/), but the error bound computation is done for both cases.
 
 To implement the error bound estimation in the observable $f \sigma_8$, you may run the code "bound_fs8.py" in the same directory as "bound_XY.py". The first code takes the trained network and computes the bound on the calculation of the observable for several values of $\Omega_{m0}$.
-
-### MG
-
-This folder contains the same as LCDM but implemented for the modified gravity model.
-
-### Paper_plots
-
-In this folder, you can find the codes to reproduce the plots presented in the paper. You can also find the trained networks for both models here.
 
 ## For the user
 
@@ -70,5 +62,5 @@ To run the codes and get into the PINNs world, you first need to make sure you h
 
 Here, we recommend starting with the examples because the codes are heavily commented. So, go to: examples/No_bundle and run the code "Training_example.py". If the code runs, you should find a plot of the loss function and a file called "nets.ph". This file is your first PINN! Now you can run the code "Loading_example.py" (which needs to be run in the same directory where you saved the "nets.ph" file) and it will plot the solution and compute the percentage error. The next step is to go to the directory examples/Bundle and do the same, but here you can also perform parameter estimation using simulated data through MCMC with the code "MCMC_example.py".
 
-When you have finished with the examples, you can move on to the LCDM folder to train the networks, load the solutions, and also perform the error estimation through the $\eta$ method with the code "percentage_error.py".
+When you have finished with the examples, you can move on to the LCDM or MG folder to train the networks, load the solutions, and also perform the error estimation through the $\eta$ method with the code "percentage_error.py".
 
